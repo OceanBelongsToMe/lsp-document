@@ -400,13 +400,13 @@ impl<T: Borrow<str>> IndexedText<T> {
         self.offset_range_to_range(range)
             .and_then(|range| self.range_to_lsp_range(&range))
     }
-    pub fn lsp_pos_to_offset(&self, offset: usize) -> Option<lsp_types::Position> {
-        self.offset_to_pos(offset)
-            .and_then(|pos| self.pos_to_lsp_pos(&pos))
+    pub fn lsp_pos_to_offset(&self, lsp_pos: &lsp_types::Position) -> Option<usize> {
+        self.lsp_pos_to_pos(lsp_pos)
+            .and_then(|pos| self.pos_to_offset(&pos))
     }
-    pub fn lsp_range_to_offset(&self, range: Range<usize>) -> Option<lsp_types::Range> {
-        self.offset_range_to_range(range)
-            .and_then(|range| self.range_to_lsp_range(&range))
+    pub fn lsp_range_to_offset(&self, range: &lsp_types::Range) -> Option<Range<usize>> {
+        self.lsp_range_to_range(range)
+            .and_then(|range| self.range_to_offset_range(range))
     }
     pub fn substr_offset(&self, offsets: Range<usize>) -> Option<&str> {
         self.offset_range_to_range(offsets)
