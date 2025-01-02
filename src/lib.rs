@@ -412,6 +412,10 @@ impl<T: Borrow<str>> IndexedText<T> {
         self.offset_range_to_range(offsets)
             .and_then(|range| self.substr(range))
     }
+    pub fn substr_lsp_range(&self, lsp_range: &lsp_types::Range) -> Option<&str> {
+        self.lsp_range_to_range(lsp_range)
+            .and_then(|range| self.substr(range))
+    }
 }
 
 impl<T: Borrow<str>> TextMap for IndexedText<T> {
