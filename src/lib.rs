@@ -368,7 +368,7 @@ impl<T: Borrow<str>> IndexedText<T> {
         IndexedText { text, line_ranges }
     }
 
-    fn offset_to_line(&self, offset: usize) -> Option<u32> {
+    pub fn offset_to_line(&self, offset: usize) -> Option<u32> {
         match offset.cmp(&self.text.borrow().len()) {
             Ordering::Greater => None,
             Ordering::Equal => Some((self.line_ranges.len().max(2) - 2) as u32),
@@ -391,6 +391,26 @@ impl<T: Borrow<str>> IndexedText<T> {
                 )
             }
         }
+    }
+    pub fn offset_to_lsp_pos(&self, offset: usize) -> Option<lsp_types::Position> {
+        self.offset_to_pos(offset)
+            .and_then(|pos| self.pos_to_lsp_pos(&pos))
+    }
+    pub fn offset_to_lsp_range(&self, range: Range<usize>) -> Option<lsp_types::Range> {
+        self.offset_range_to_range(range)
+            .and_then(|range| self.range_to_lsp_range(&range))
+    }
+    pub fn lsp_pos_to_offset(&self, offset: usize) -> Option<lsp_types::Position> {
+        self.offset_to_pos(offset)
+            .and_then(|pos| self.pos_to_lsp_pos(&pos))
+    }
+    pub fn lsp_range_to_offset(&self, range: Range<usize>) -> Option<lsp_types::Range> {
+        self.offset_range_to_range(range)
+            .and_then(|range| self.range_to_lsp_range(&range))
+    }
+    pub fn substr_offset(&self, offsets: Range<usize>) -> Option<&str> {
+        self.offset_range_to_range(offsets)
+            .and_then(|range| self.substr(range))
     }
 }
 
